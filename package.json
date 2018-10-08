@@ -1,0 +1,34 @@
+{
+  "name": "vtkjsproject",
+  "version": "1.0.0",
+  "description": "vtk-js project",
+  "main": "main.js",
+  "scripts": {
+    "test": "build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EJShim/vtkjsproject.git"
+  },
+  "keywords": [
+    "vtk"
+  ],
+  "author": "EJShim",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EJShim/vtkjsproject/issues"
+  },
+  "homepage": "https://github.com/EJShim/vtkjsproject#readme",
+  "dependencies": {
+    "npm": "^6.4.1",
+    "vtk.js": "^7.11.3"
+  },
+  "devDependencies": {
+    "kw-web-suite": "^7.0.2"
+  },
+  "scripts":{
+    "build": "webpack --progress --colors --mode development",
+    "build:release": "webpack --progress --colors --mode production",
+    "start": "webpack-dev-server --content-base ./dist"
+  }
+}
