@@ -1,10 +1,98 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-  </head>
-  <body>
-    <script type="text/javascript" src="MyWebApp.js"></script>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TEST_VTK.JS</title>
+  <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+</head>
+<body>
+  <div id="wrapper">
+    <div id=containerHeader>
+      <div id="logo">TEST_VTK</div>
+          
+    </div>
+    <!-- start body -->
+    <div id= "containerBody">
+      <div id = "nav">
+          <a>example1</a>
+          <a>example2</a>
+          <a>example3</a>
+      </div>
+      <div id="sectionContainer">
+        <div id="aside" class="ui-widget-content">
+          <div id ="func1" class = "aside">
+            <div id = "func1_title1" class="func1_title">aside1</div>
+            <a>test1</a>
+            <a>test2</a>
+            <a>test3</a>
+          </div> <!--func1-->
+          <div id ="func2" class = "aside">
+             <div id="func1_title2" class="func1_title">aside2</div>
+             <a>test1</a>
+             <a>test2</a>
+             <a>test3</a>
+          </div><!--func2-->
+        </div> <!--aside-->
+
+        <div id="section">
+          <div id= "mainViewer" class="ui-widget-content">
+          </div>
+          <div id="subViewers">
+            <div id="subViewr1" class="sub_viewer"></div>
+            <div id="subViewr2" class="sub_viewer"></div>
+          </div><!--subViewers-->
+        </div><!--section-->
+      </div><!--sectionContainer-->
+    </div> <!--containerBody-->
+    <div id = containerFooter>Copyright &copy; 2018
+    </div>
+  </div>
+</body>
+<link rel="stylesheet" href="test_vtkjs.css">
+<script type="text/javascript" src="MyWebApp.js"></script>
+<script>
+  $(function() {
+    $( "#aside" ).resizable({
+      minWidth: 100,
+      maxWidth: 300,
+      handles: "e",
+      resize: function( e, ui){
+          var currentWidth = ui.size.width;
+          var gap = 4;
+          currentWidth += gap;
+          $("#section").css("width", "calc(100% - "+ currentWidth +"px)");
+      }
+    });
+  });
+  $(function() {
+    $( "#mainViewer" ).resizable({
+      minWidth: 300,
+      maxWidth: 1500,
+      handles: "e",
+      resize: function( e, ui){
+          var currentWidth = ui.size.width;
+          var gap = 14;
+          currentWidth += gap;
+          $("#subViewers").css("width", "calc(100% - "+ currentWidth +"px)");
+      }
+    });
+  });
+  // $(function() {
+  //   $( "#subViewr1" ).resizable({
+  //     min-height: 300,
+  //     max-height: 900,
+  //     handles: "s",
+  //     resize: function( s, ui){
+  //         var currentWidth = ui.size.height
+  //         var isHeight = #section.size.height;
+  //         var gap = 14;
+  //         isHeight-= (currentWidth += gap);
+  //         $("#subViewer2").css("height", "isHeight"+"%");
+  //     }
+  //   });
+  // });
+</script>
+
 </html>

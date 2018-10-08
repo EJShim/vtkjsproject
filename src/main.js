@@ -1,48 +1,39 @@
-
-import vtkFullScreenRenderWindow from 'vtk.js/Sources/Rendering/Misc/FullScreenRenderWindow';
+import vtkOpenGLRenderWindow from 'vtk.js/Sources/Rendering/OpenGL/RenderWindow';
+import vtkRenderer from 'vtk.js/Sources/Rendering/Core/Renderer';
+import vtkRenderWindow from 'vtk.js/Sources/Rendering/Core/RenderWindow';
+import vtkRenderWindowInteractor from 'vtk.js/Sources/Rendering/Core/RenderWindowInteractor';
 
 import vtkActor           from 'vtk.js/Sources/Rendering/Core/Actor';
 import vtkCalculator      from 'vtk.js/Sources/Filters/General/Calculator';
 import vtkConeSource      from 'vtk.js/Sources/Filters/Sources/ConeSource';
 import vtkMapper          from 'vtk.js/Sources/Rendering/Core/Mapper';
-import { AttributeTypes } from 'vtk.js/Sources/Common/DataModel/DataSetAttributes/Constants';
-import { FieldDataTypes } from 'vtk.js/Sources/Common/DataModel/DataSet/Constants';
 
-import controlPanel from './controller.html';
 
-// ----------------------------------------------------------------------------
-// Standard rendering code setup
-// ----------------------------------------------------------------------------
+// VTK renderWindow/renderer
+const renderWindow = vtkRenderWindow.newInstance();
+const renderer = vtkRenderer.newInstance();
+renderWindow.addRenderer(renderer);
 
-const fullScreenRenderer = vtkFullScreenRenderWindow.newInstance();
-const renderer = fullScreenRenderer.getRenderer();
-const renderWindow = fullScreenRenderer.getRenderWindow();
+// OpenGlRenderWindow
+const container = document.querySelector('#mainViewer');
+const openGLRenderWindow = vtkOpenGLRenderWindow.newInstance();
+openGLRenderWindow.setContainer(container);
+renderWindow.addView(openGLRenderWindow);
+
+// Interactor
+const interactor = vtkRenderWindowInteractor.newInstance();
+interactor.setView(openGLRenderWindow);
+interactor.initialize();
+interactor.bindEvents(container);
 
 // ----------------------------------------------------------------------------
 // Example code
 // ----------------------------------------------------------------------------
 
 const coneSource = vtkConeSource.newInstance({ height: 1.0 });
-const filter = vtkCalculator.newInstance();
-
-filter.setInputConnection(coneSource.getOutputPort());
-filter.setFormula({
-  getArrays: inputDataSets => ({
-    input: [],
-    output: [
-      { location: FieldDataTypes.CELL, name: 'Random', dataType: 'Float32Array', attribute: AttributeTypes.SCALARS },
-    ],
-  }),
-  evaluate: (arraysIn, arraysOut) => {
-    const [scalars] = arraysOut.map(d => d.getData());
-    for (let i = 0; i < scalars.length; i++) {
-      scalars[i] = Math.random();
-    }
-  },
-});
 
 const mapper = vtkMapper.newInstance();
-mapper.setInputConnection(filter.getOutputPort());
+mapper.setInputConnection(coneSource.getOutputPort());
 
 const actor = vtkActor.newInstance();
 actor.setMapper(mapper);
@@ -50,23 +41,3 @@ actor.setMapper(mapper);
 renderer.addActor(actor);
 renderer.resetCamera();
 renderWindow.render();
-
-// -----------------------------------------------------------
-// UI control handling
-// -----------------------------------------------------------
-
-fullScreenRenderer.addController(controlPanel);
-const representationSelector = document.querySelector('.representations');
-const resolutionChange = document.querySelector('.resolution');
-
-representationSelector.addEventListener('change', (e) => {
-  const newRepValue = Number(e.target.value);
-  actor.getProperty().setRepresentation(newRepValue);
-  renderWindow.render();
-});
-
-resolutionChange.addEventListener('input', (e) => {
-  const resolution = Number(e.target.value);
-  coneSource.setResolution(resolution);
-  renderWindow.render();
-});

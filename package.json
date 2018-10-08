@@ -4,7 +4,9 @@
   "description": "vtk-js project",
   "main": "main.js",
   "scripts": {
-    "test": "build"
+    "build": "webpack --progress --colors --mode development",
+    "build:release": "webpack --progress --colors --mode production",
+    "start": "webpack-dev-server --content-base ./dist"
   },
   "repository": {
     "type": "git",
@@ -25,10 +27,5 @@
   },
   "devDependencies": {
     "kw-web-suite": "^7.0.2"
-  },
-  "scripts":{
-    "build": "webpack --progress --colors --mode development",
-    "build:release": "webpack --progress --colors --mode production",
-    "start": "webpack-dev-server --content-base ./dist"
   }
 }
