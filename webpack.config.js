@@ -2,21 +2,22 @@ var path = require('path');
 var webpack = require('webpack');
 var vtkRules = require('vtk.js/Utilities/config/dependency.js').webpack.v2.rules;
 
-var entry = path.join(__dirname, './src/main.js');
+// var entry = path.join(__dirname, './src/main.js');
 const sourcePath = path.join(__dirname, './src');
 const outputPath = path.join(__dirname, './dist');
 
 module.exports = {
-  entry,
+  entry:path.join(__dirname, './src/main.js'),
   output: {
     path: outputPath,
-    filename: 'MyWebApp.js',
+    filename: 'bundle.js',
   },
   module: {
     rules: [
-        { test: entry, loader: "expose-loader?MyWebApp" },
+        { test: path.join(__dirname, './src/main.js'), loader: "expose-loader?bundle" },
         { test: /\.html$/, loader: 'html-loader' },
-    ].concat(vtkRules),
+        { test: path.join(__dirname, './server/main.js'),loader: 'babel-loader'}
+    ].concat(vtkRules),    
   },
   resolve: {
     modules: [
