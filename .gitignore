@@ -3,4 +3,5 @@ node_modules
 package-lock.json
 dist/MyWebApp.js
 dist/bundle.js
+build/main.js
 .DS_Store
