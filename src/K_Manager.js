@@ -1,13 +1,13 @@
 import vtkGenericRenderWindow from 'vtk.js/Sources/Rendering/Misc/GenericRenderWindow'
 import vtkActor           from 'vtk.js/Sources/Rendering/Core/Actor';
 import vtkMapper          from 'vtk.js/Sources/Rendering/Core/Mapper';
-import {ResizeSensor}     from 'css-element-queries';
-
-
 import vtkConeSource      from 'vtk.js/Sources/Filters/Sources/ConeSource';
 import vtkCubeSource      from 'vtk.js/Sources/Filters/Sources/CubeSource';
 import vtkCylinderSource      from 'vtk.js/Sources/Filters/Sources/CylinderSource';
+import vtkArrowSource from 'vtk.js/Sources/Filters/Sources/ArrowSource';
 
+// For resize Handling,, vulky
+import {ResizeSensor}     from 'css-element-queries';
 //Mesh Manager
 import K_MeshManager from 'K_MeshManager.js'
 
@@ -43,7 +43,7 @@ class K_Manager {
 
         //not properly working on microsoft edge,, there is no standard for handling resize event
         new ResizeSensor(container, genericRenderWindow.resize);
-        this.renderer.setBackground(0.4, 0.1, 0.1);
+        
 
 
         // ----------------------------------------------------------------------------
@@ -77,10 +77,12 @@ class K_Manager {
 
     static Test(){
         //show random source
-        const sources = [vtkConeSource, vtkCubeSource, vtkCylinderSource];
-        const idx = Math.floor(Math.random() * (2 - 0 + 1));
+        const sources = [vtkConeSource, vtkCubeSource, vtkCylinderSource, vtkArrowSource];
+        const idx = Math.floor(Math.random() * 4);
         const source = sources[idx].newInstance();
         this.mapper.setInputConnection(source.getOutputPort());
+        this.actor.getProperty().setColor(Math.random(), Math.random(), Math.random());
+        this.renderer.setBackground(Math.random(), Math.random(), Math.random());
         
         this.Redraw();
         
