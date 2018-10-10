@@ -11,6 +11,8 @@ import vtkCylinderSource      from 'vtk.js/Sources/Filters/Sources/CylinderSourc
 //Mesh Manager
 import K_MeshManager from 'K_MeshManager.js'
 
+
+// 가장 root 가 되는 manager, static method 로 동작하여서 어디서든 정보에 접근 및 수정할 수 있게 되어있음
 class K_Manager {
 
     static New(){
@@ -23,8 +25,6 @@ class K_Manager {
         //Rendering Pipeline
         this.mapper = null;
         this.actor = null;
-
-
 
         this._Initialize();
 
