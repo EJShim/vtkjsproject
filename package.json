@@ -9,7 +9,6 @@
     "watch": "webpack-dev-server --content-base ./dist",
     "build:release": "babel server --out-dir build && webpack --progress --colors --mode production",
     "start": "node build/main.js"
-
   },
   "repository": {
     "type": "git",
@@ -25,6 +24,8 @@
   },
   "homepage": "https://github.com/EJShim/vtkjsproject#readme",
   "dependencies": {
+    "css-element-queries": "^1.0.2",
+    "jsdom": "^12.2.0",
     "npm": "^6.4.1",
     "vtk.js": "^7.11.3"
   },
