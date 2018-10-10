@@ -15,8 +15,7 @@ module.exports = {
   module: {
     rules: [
         { test: path.join(__dirname, './src/main.js'), loader: "expose-loader?bundle" },
-        { test: /\.html$/, loader: 'html-loader' },
-        { test: path.join(__dirname, './server/main.js'),loader: 'babel-loader'}
+        { test: /\.html$/, loader: 'html-loader' },        
     ].concat(vtkRules),    
   },
   resolve: {

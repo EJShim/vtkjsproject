@@ -5,9 +5,11 @@
   "main": "main.js",
   "scripts": {
     "clean": "rm dist/bundle.js",
-    "build": "babel server --out-dir build && webpack --progress --colors --mode development",
-    "build:release": "webpack --progress --colors --mode production",
-    "start": "webpack-dev-server --content-base ./dist"
+    "build": "webpack --progress --colors --mode development",
+    "watch": "webpack-dev-server --content-base ./dist",
+    "build:release": "babel server --out-dir build && webpack --progress --colors --mode production",
+    "start": "node build/main.js"
+
   },
   "repository": {
     "type": "git",
