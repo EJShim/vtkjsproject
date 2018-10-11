@@ -5,8 +5,12 @@ class K_MeshManager{
         
     }
 
-    ImportMesh(){
-        console.log("Import Mesh Triggered");
+    ImportMesh(file){
+        console.log(file);
+
+        //create file path
+        file_path = URL.createObjectURL(file);
+        console.log(file_path);
     }
 }
 
