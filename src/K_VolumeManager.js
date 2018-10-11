@@ -2,10 +2,11 @@ import K_Manager from 'K_Manager.js'
 import macro from 'vtk.js/Sources/macro';
 import vtkColorTransferFunction from 'vtk.js/Sources/Rendering/Core/ColorTransferFunction';
 import vtkPiecewiseFunction from 'vtk.js/Sources/Common/DataModel/PiecewiseFunction';
-// import vtkPiecewiseGaussianWidget from 'vtk.js/Sources/Interaction/Widgets/PiecewiseGaussianWidget';
+import vtkPiecewiseGaussianWidget from 'vtk.js/Sources/Interaction/Widgets/PiecewiseGaussianWidget';
 import vtkVolume from 'vtk.js/Sources/Rendering/Core/Volume';
 import vtkVolumeMapper from 'vtk.js/Sources/Rendering/Core/VolumeMapper';
 import readImageDICOMFileSeries from 'itk/readImageDICOMFileSeries'
+import {ResizeSensor}     from 'css-element-queries'
 
 
 import vtkImageData from 'vtk.js/Sources/Common/DataModel/ImageData';
@@ -77,6 +78,7 @@ class K_VolumeManager{
 
         this.ctf = null;
         this.otf = null;
+        this.gaussianWidget = null;
 
     }
 
@@ -102,12 +104,62 @@ class K_VolumeManager{
             //Property Set
             // create color and opacity transfer functions
             this.ctf = vtkColorTransferFunction.newInstance();            
-            this.otf = vtkPiecewiseFunction.newInstance();            
+            this.otf = vtkPiecewiseFunction.newInstance();
+
+            //Initialize Test Gaussian Widget
+            this.gaussianWidget = vtkPiecewiseGaussianWidget.newInstance({
+                numberOfBins: 256,                
+            });
+            this.gaussianContainer = document.querySelector('#subViewr1');
+            this.gaussianWidget.setContainer(this.gaussianContainer);
+            new ResizeSensor(this.gaussianContainer, this.ResizeGaussianWidget.bind(this));
+            this.ResizeGaussianWidget();
+
+            this.gaussianWidget.updateStyle({
+                backgroundColor: 'rgba(0, 0, 0, 0.0)',
+                histogramColor: 'rgba(100, 0, 0, 1.0)',
+                strokeColor: 'rgb(0, 0, 0)',
+                activeColor: 'rgb(255, 255, 255)',
+                handleColor: 'rgb(50, 150, 50)',
+                buttonDisableFillColor: 'rgba(255, 255, 255, 0.5)',
+                buttonDisableStrokeColor: 'rgba(0, 0, 0, 0.5)',
+                buttonStrokeColor: 'rgba(0, 0, 0, 1)',
+                buttonFillColor: 'rgba(255, 255, 255, 1)',
+                strokeWidth: 2,
+                activeStrokeWidth: 3,
+                buttonStrokeWidth: 1.5,
+                handleWidth: 3,
+                iconSize: 20, // Can be 0 if you want to remove buttons (dblClick for (+) / rightClick for (-))
+                padding: 10,
+            });
+
+            this.gaussianWidget.setDataArray(imageData.getPointData().getScalars().getData());
+            this.gaussianWidget.applyOpacity(this.otf);
+            this.gaussianWidget.setColorTransferFunction(this.ctf);            
+
+            this.gaussianWidget.onAnimation((start) => {
+                if (start) {
+                    K_Manager.renderWindow.getInteractor().requestAnimation(this.gaussianWidget);
+                } else {
+                    K_Manager.renderWindow.getInteractor().cancelAnimation(this.gaussianWidget);
+                }
+            });
+              
+            this.gaussianWidget.onOpacityChange(() => {
+                this.gaussianWidget.applyOpacity(this.otf);
+                if (!K_Manager.renderWindow.getInteractor().isAnimating()) {
+                    K_Manager.renderWindow.render();
+                }
+            });
+
+            
+            this.gaussianWidget.addGaussian(0.75, 1, 0.3, 0, 0);            
+            this.gaussianWidget.bindMouseListeners();
 
             this.actor.getProperty().setRGBTransferFunction(0, this.ctf);
             this.actor.getProperty().setScalarOpacity(0, this.otf);
             this.actor.getProperty().setScalarOpacityUnitDistance(0, 4.5);
-            this.actor.getProperty().setInterpolationTypeToLinear();
+            this.actor.getProperty().setInterpolationTypeToFastLinear();
 
             //from here, idunno what exactly they are doing
             this.actor.getProperty().setUseGradientOpacity(0, true);
@@ -115,6 +167,9 @@ class K_VolumeManager{
             this.actor.getProperty().setGradientOpacityMinimumOpacity(0, 0.0);
             this.actor.getProperty().setGradientOpacityMaximumValue(0, 100);
             this.actor.getProperty().setGradientOpacityMaximumOpacity(0, 1.0);
+
+
+            
 
             K_Manager.AddVolume(this.actor);
         }
@@ -124,16 +179,23 @@ class K_VolumeManager{
 
         this.ctf.removeAllPoints();
         this.ctf.addRGBPoint(scalarRange[0], 1.0, 1.0, 1.0);
-        this.ctf.addRGBPoint(scalarRange[1], 1.0, 1.0, 1.0);
-        this.otf.removeAllPoints();
-        this.otf.addPoint(scalarRange[0], 0.0);
-        this.otf.addPoint(scalarRange[1], 0.1);
+        this.ctf.addRGBPoint(scalarRange[1], 1.0, 1.0, 1.0);        
 
         
 
         K_Manager.Redraw();
-        
+    }
 
+    ResizeGaussianWidget(){        
+
+        const dims = this.gaussianContainer.getBoundingClientRect();
+        
+        this.gaussianWidget.setSize(
+          Math.floor(dims.width),
+          Math.floor(dims.height)
+        );
+
+        this.gaussianWidget.render();
     }
 }
 

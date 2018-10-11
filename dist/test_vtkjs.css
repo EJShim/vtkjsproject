@@ -50,7 +50,7 @@ body {
 #logo {
     margin-left: 20px;
     display: inline;
-    font-size: 30px;
+    font-size: 10px;
     font-family: Tahoma;
     font-weight: bold;
     /* width: 168px;
@@ -94,7 +94,7 @@ body {
 
 /*nav*/
 #containerBody{
-    height: 92%;
+    height: 98%;
 }
 #nav {
     display: flex;

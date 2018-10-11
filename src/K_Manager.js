@@ -68,7 +68,7 @@ class K_Manager {
     static Redraw(){
         this.renderer.resetCamera();
         this.renderWindow.render();
-    }    
+    }
 
 }
 
