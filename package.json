@@ -25,14 +25,22 @@
   "homepage": "https://github.com/EJShim/vtkjsproject#readme",
   "dependencies": {
     "css-element-queries": "^1.0.2",
+    "itk": "^9.1.2",
     "jsdom": "^12.2.0",
     "npm": "^6.4.1",
-    "vtk.js": "^7.11.3"
+    "vtk.js": "^7.13.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-es2015": "^6.24.1",
+    "copy-webpack-plugin": "^4.5.3",
     "express": "^4.16.3",
-    "kw-web-suite": "^7.0.2"
+    "kw-web-suite": "^7.0.2",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.9",
+    "worker-loader": "^2.0.0"
   }
 }

@@ -14,37 +14,47 @@ function onImportMesh(){
     //Multiple:True will let dialog be able to select multiple files
     fileDialog.setAttribute("multiple", false);
     fileDialog.click();    
-
     fileDialog.addEventListener("change", function(event){                
         //If no file selected
         if(event.target.files.length < 1) return;
 
         //http file element
         const file = event.target.files[0];        
-        K_Manager.MeshMgr().ImoprtMesh(file);
+        K_Manager.MeshMgr().ImportMesh(file);
+        K_Manager.Redraw();
 
         //Remove Dialog??
     });
+}
 
-//   fileDialog.addEventListener("change", function(ev){
-//     //console.log(ev.target.files);
+function onImportVolume(){
 
-//     for(var i=0 ; i<ev.target.files.length ; i++){
-//         var path = URL.createObjectURL(ev.target.files[i]);
-//         var name = ev.target.files[i].name;
+    let fileDialog = document.createElement("input");
+    fileDialog.setAttribute("type", "file");
+    fileDialog.setAttribute("accept", ".dcm");    
+    fileDialog.setAttribute("multiple", true);
+    fileDialog.click();    
+    fileDialog.addEventListener("change", function(event){                
+        //If no file selected
+        if(event.target.files.length < 1) {
+            console.log("no file selected");
+            return;
+        }
 
-//         //Import Mesh
-//         Manager.MeshMgr().ImportMesh(path, name);
-//     }
+        //iterate file in this directory
+        
+        K_Manager.VolumeMgr().ImportVolume(event.target.files);
+        K_Manager.Redraw();
+    });
 
-//     //Remove File Dialog Element
-//     parent.removeChild(fileDialog);
-//   });
 
+
+    
 }
 
 function onTest(){
-    K_Manager.Test();
+    K_Manager.MeshMgr().Test();
+    K_Manager.Redraw();
 }
 
 
@@ -52,4 +62,5 @@ function onTest(){
 
 ///connect button and event listener functions
 document.querySelector('#button_importMesh').addEventListener("click", onImportMesh);
+document.querySelector('#button_importDicom').addEventListener("click", onImportVolume);
 document.querySelector('#button_test').addEventListener("click", onTest);

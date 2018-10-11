@@ -1,16 +1,9 @@
 import vtkGenericRenderWindow from 'vtk.js/Sources/Rendering/Misc/GenericRenderWindow'
-import vtkActor           from 'vtk.js/Sources/Rendering/Core/Actor';
-import vtkMapper          from 'vtk.js/Sources/Rendering/Core/Mapper';
-import vtkConeSource      from 'vtk.js/Sources/Filters/Sources/ConeSource';
-import vtkCubeSource      from 'vtk.js/Sources/Filters/Sources/CubeSource';
-import vtkCylinderSource      from 'vtk.js/Sources/Filters/Sources/CylinderSource';
-import vtkArrowSource from 'vtk.js/Sources/Filters/Sources/ArrowSource';
-
 // For resize Handling,, vulky
-import {ResizeSensor}     from 'css-element-queries';
+import {ResizeSensor}     from 'css-element-queries'
 //Mesh Manager
 import K_MeshManager from 'K_MeshManager.js'
-
+import K_VolumeManager from 'K_VolumeManager.js'
 
 // 가장 root 가 되는 manager, static method 로 동작하여서 어디서든 정보에 접근 및 수정할 수 있게 되어있음
 class K_Manager {
@@ -18,13 +11,12 @@ class K_Manager {
     static New(){
         //Instances
         this.meshManager = null;
+        this.volumeManager = null;
         
         this.renderWindow = null;
         this.renderer = null;
 
-        //Rendering Pipeline
-        this.mapper = null;
-        this.actor = null;
+        
 
         this._Initialize();
 
@@ -39,25 +31,12 @@ class K_Manager {
         // VTK renderWindow/renderer
         this.renderWindow = genericRenderWindow.getRenderWindow();
         this.renderer = genericRenderWindow.getRenderer();
+        this.renderer.setBackground(0.0, 0.0, 0.0);
         genericRenderWindow.setContainer(container);
 
         //not properly working on microsoft edge,, there is no standard for handling resize event
         new ResizeSensor(container, genericRenderWindow.resize);
-        
-
-
-        // ----------------------------------------------------------------------------
-        // Example code
-        // ----------------------------------------------------------------------------        
-        const coneSource = vtkConeSource.newInstance({ height: 1.0 });
-
-        this.mapper = vtkMapper.newInstance();
-        this.mapper.setInputConnection(coneSource.getOutputPort());
-
-        this.actor = vtkActor.newInstance();
-        this.actor.setMapper(this.mapper);
-
-        this.renderer.addActor(this.actor);        
+       
         genericRenderWindow.resize();
     }
 
@@ -70,23 +49,26 @@ class K_Manager {
         return this.meshManager;
     }
 
+    static VolumeMgr(){
+        if(this.volumeManager == null){
+            this.volumeManager = new K_VolumeManager();
+        }
+
+        return this.volumeManager;
+    }
+
+    static AddActor(actor){
+        this.renderer.addActor(actor);
+    }
+
+    static AddVolume(volume){
+        this.renderer.addVolume(volume);
+    }
+
     static Redraw(){
         this.renderer.resetCamera();
         this.renderWindow.render();
-    }
-
-    static Test(){
-        //show random source
-        const sources = [vtkConeSource, vtkCubeSource, vtkCylinderSource, vtkArrowSource];
-        const idx = Math.floor(Math.random() * 4);
-        const source = sources[idx].newInstance();
-        this.mapper.setInputConnection(source.getOutputPort());
-        this.actor.getProperty().setColor(Math.random(), Math.random(), Math.random());
-        this.renderer.setBackground(Math.random(), Math.random(), Math.random());
-        
-        this.Redraw();
-        
-    }
+    }    
 
 }
 
