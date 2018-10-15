@@ -6,3 +6,4 @@ dist/bundle.js
 build/main.js
 .DS_Store
 dist/itk/
+yarn.lock

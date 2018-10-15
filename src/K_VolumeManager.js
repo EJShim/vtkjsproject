@@ -83,13 +83,16 @@ class K_VolumeManager{
     }
 
     ImportVolume(files){
-        console.log(files[0]);
-        readImageDICOMFileSeries(null, files).then(function ({ image, webWorker }){
-            webWorker.terminate()                    
+        console.log("Volume Import Started");
+        readImageDICOMFileSeries(null, files).then(({ image, webWorker })=>{            
+            webWorker.terminate();                  
+            
+            console.log(image);
 
             let imageData = convertItkToVtkImage(image);
             K_Manager.VolumeMgr().SetImageData(imageData);
-            
+        }).catch((err)=>{
+            console.log(err);
         })
     }
 
