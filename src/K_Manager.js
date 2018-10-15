@@ -1,4 +1,5 @@
 import vtkGenericRenderWindow from 'vtk.js/Sources/Rendering/Misc/GenericRenderWindow'
+import vtkInteractorStyleManipulator from 'vtk.js/Sources/Interaction/Style/InteractorStyleManipulator';
 // For resize Handling,, vulky
 import {ResizeSensor}     from 'css-element-queries'
 //Mesh Manager
@@ -16,6 +17,9 @@ class K_Manager {
         this.renderWindow = null;
         this.renderer = null;
 
+        this.sliceRenderWindow = null;
+        this.sliceRenderer = null;
+
         
 
         this._Initialize();
@@ -31,13 +35,28 @@ class K_Manager {
         // VTK renderWindow/renderer
         this.renderWindow = genericRenderWindow.getRenderWindow();
         this.renderer = genericRenderWindow.getRenderer();
-        this.renderer.setBackground(0.0, 0.0, 0.0);
+        this.renderer.setBackground(0.0, 0.05, 0.0);
         genericRenderWindow.setContainer(container);
-
         //not properly working on microsoft edge,, there is no standard for handling resize event
         new ResizeSensor(container, genericRenderWindow.resize);
-       
         genericRenderWindow.resize();
+
+
+        const resizeContainer = document.querySelector('#subViewr2');
+        const sliceGenericRenderWindow = vtkGenericRenderWindow.newInstance();
+        const interactorStyle = vtkInteractorStyleManipulator.newInstance();
+        sliceGenericRenderWindow.getInteractor().setInteractorStyle(interactorStyle);
+        interactorStyle.removeAllMouseManipulators();
+
+        this.sliceRenderWindow = sliceGenericRenderWindow.getRenderWindow();
+        this.sliceRenderer = sliceGenericRenderWindow.getRenderer();
+        this.sliceRenderer.setBackground(0.0, 0.0, 0.02);
+        this.sliceRenderer.getActiveCamera().setParallelProjection(true);
+        sliceGenericRenderWindow.setContainer(resizeContainer);
+        new ResizeSensor(resizeContainer, sliceGenericRenderWindow.resize);
+        sliceGenericRenderWindow.resize();
+
+        
     }
 
 
@@ -61,13 +80,16 @@ class K_Manager {
         this.renderer.addActor(actor);
     }
 
-    static AddVolume(volume){
-        this.renderer.addVolume(volume);
+    static AddSliceActor(actor){
+        this.sliceRenderer.addActor(actor);
     }
 
     static Redraw(){
         this.renderer.resetCamera();
         this.renderWindow.render();
+        
+        this.sliceRenderer.resetCamera();
+        this.sliceRenderWindow.render();
     }
 
 }

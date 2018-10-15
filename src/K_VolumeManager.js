@@ -11,6 +11,8 @@ import {ResizeSensor}     from 'css-element-queries'
 
 import vtkImageData from 'vtk.js/Sources/Common/DataModel/ImageData';
 import vtkDataArray from 'vtk.js/Sources/Common/Core/DataArray';
+import vtkImageMapper from 'vtk.js/Sources/Rendering/Core/ImageMapper';
+import vtkImageSlice from 'vtk.js/Sources/Rendering/Core/ImageSlice';
 
 const { vtkErrorMacro } = macro;
 
@@ -75,12 +77,18 @@ class K_VolumeManager{
         this.imageData = null;
         this.mapper = null;
         this.actor = null;
+        this.sliceMapper = null;
+        this.sliceActor = null;
+
+
 
         this.ctf = null;
         this.otf = null;
         this.gaussianWidget = null;
 
     }
+
+
 
     ImportVolume(files){
         console.log("Volume Import Started");
@@ -96,7 +104,9 @@ class K_VolumeManager{
         })
     }
 
-    SetImageData(imageData){        
+    SetImageData(imageData){       
+        
+        this.imageData = imageData
 
         if(this.mapper == null || this.actor == null){
             this.actor = vtkVolume.newInstance();
@@ -120,7 +130,7 @@ class K_VolumeManager{
 
             this.gaussianWidget.updateStyle({
                 backgroundColor: 'rgba(0, 0, 0, 0.0)',
-                histogramColor: 'rgba(100, 0, 0, 1.0)',
+                histogramColor: 'rgba(255, 0, 0, 1.0)',
                 strokeColor: 'rgb(0, 0, 0)',
                 activeColor: 'rgb(255, 255, 255)',
                 handleColor: 'rgb(50, 150, 50)',
@@ -165,26 +175,36 @@ class K_VolumeManager{
             this.actor.getProperty().setInterpolationTypeToFastLinear();
 
             //from here, idunno what exactly they are doing
-            this.actor.getProperty().setUseGradientOpacity(0, true);
-            this.actor.getProperty().setGradientOpacityMinimumValue(0, 15);
-            this.actor.getProperty().setGradientOpacityMinimumOpacity(0, 0.0);
-            this.actor.getProperty().setGradientOpacityMaximumValue(0, 100);
-            this.actor.getProperty().setGradientOpacityMaximumOpacity(0, 1.0);
+            // this.actor.getProperty().setUseGradientOpacity(0, true);
+            // this.actor.getProperty().setGradientOpacityMinimumValue(0, 15);
+            // this.actor.getProperty().setGradientOpacityMinimumOpacity(0, 0.0);
+            // this.actor.getProperty().setGradientOpacityMaximumValue(0, 100);
+            // this.actor.getProperty().setGradientOpacityMaximumOpacity(0, 1.0);
 
 
-            
+            K_Manager.AddActor(this.actor);
 
-            K_Manager.AddVolume(this.actor);
+
+            //Add Slice Image
+            this.sliceMapper = vtkImageMapper.newInstance();
+            this.sliceMapper.setInputData(imageData);
+            this.sliceMapper.setKSlice(30);
+            this.sliceActor = vtkImageSlice.newInstance();
+            this.sliceActor.setMapper(this.sliceMapper);
+
+            K_Manager.AddSliceActor(this.sliceActor);
+            K_Manager.AddActor(this.sliceActor);
+
+            //Initialize CTF Ctonol
+            this.InitializeCTFContoller();
         }
 
-        const scalarRange = imageData.getPointData().getScalars().getRange();
+        //const scalarRange = imageData.getPointData().getScalars().getRange();
         this.mapper.setInputData(imageData);
 
-        this.ctf.removeAllPoints();
-        this.ctf.addRGBPoint(scalarRange[0], 1.0, 1.0, 1.0);
-        this.ctf.addRGBPoint(scalarRange[1], 1.0, 1.0, 1.0);        
+ 
 
-        
+        this.SetPresetCTF(0);
 
         K_Manager.Redraw();
     }
@@ -199,6 +219,46 @@ class K_VolumeManager{
         );
 
         this.gaussianWidget.render();
+    }
+
+    SetPresetCTF(idx){
+
+        const scalarRange = this.imageData.getPointData().getScalars().getRange();
+        
+
+        this.ctf.removeAllPoints();
+        
+        switch(idx){
+            case 0:
+                this.ctf.addRGBPoint(scalarRange[0], 1.0, 1.0, 1.0);
+                this.ctf.addRGBPoint(scalarRange[1], 1.0, 1.0, 1.0);
+                this.actor.getProperty().setShade(false);
+            break;
+            case 1:
+                this.ctf.addRGBPoint(scalarRange[0], 0.0, 0.0, 0.0);
+                this.ctf.addRGBPoint(-16, 0.73, 0.25, 0.30);                
+                this.ctf.addRGBPoint(641, 0.90, 0.82, 0.56);
+                this.ctf.addRGBPoint(scalarRange[1], 1.0, 1.0, 1.0);
+                this.actor.getProperty().setShade(true);
+                this.actor.getProperty().setAmbient(0.2);
+                this.actor.getProperty().setDiffuse(0.7);
+                this.actor.getProperty().setSpecular(0.3);
+                this.actor.getProperty().setSpecularPower(8.0);
+            break;
+            default:
+            break;
+        }
+        
+        //Redraw
+        this.gaussianWidget.render();
+        K_Manager.Redraw();
+    }
+
+    InitializeCTFContoller(){
+        const controller = document.querySelector('#ctfController'); 
+        controller.addEventListener("change", ()=>{            
+            this.SetPresetCTF(controller.selectedIndex);
+        })
     }
 }
 
