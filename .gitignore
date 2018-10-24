@@ -7,3 +7,5 @@ build/main.js
 .DS_Store
 dist/itk/
 yarn.lock
+.gcloudignore
+app.yaml

@@ -30,8 +30,8 @@ class K_MeshManager{
         this.actor = vtkActor.newInstance();
         this.actor.setMapper(this.mapper);
 
-        K_Manager.AddActor(this.actor);
-        K_Manager.Redraw();
+        K_Manager.Mgr().AddActor(this.actor);
+        K_Manager.Mgr().Redraw();
     }
 
     ImportMesh(file){

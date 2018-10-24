@@ -6,7 +6,7 @@ const app = express();
 
 app.use('/', express.static(path.join(__dirname, '../dist')));
 
-const port = 8080;
+const port = process.env.PORT || 8080;
 ///Open Server
 app.listen(port, () => {
     console.log('Express is listening on', port);

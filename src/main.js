@@ -1,8 +1,8 @@
 import K_Manager from 'K_Manager.js'
 
 //Initialize Manager
-K_Manager.New();
-K_Manager.Redraw();
+// K_Manager.Mgr().Redraw();
+
 
 
 //Event Listeners
@@ -21,7 +21,7 @@ function onImportMesh(){
         //http file element
         const file = event.target.files[0];        
         K_Manager.MeshMgr().ImportMesh(file);
-        K_Manager.Redraw();
+        K_Manager.Mgr().Redraw();
 
         //Remove Dialog??
     });
@@ -44,7 +44,7 @@ function onImportVolume(){
         //iterate file in this directory
         
         K_Manager.VolumeMgr().ImportVolume(event.target.files);
-        K_Manager.Redraw();
+        K_Manager.Mgr().Redraw();
     });
 
 
@@ -54,7 +54,7 @@ function onImportVolume(){
 
 function onTest(){
     K_Manager.MeshMgr().Test();
-    K_Manager.Redraw();
+    K_Manager.Mgr().Redraw();
 }
 
 

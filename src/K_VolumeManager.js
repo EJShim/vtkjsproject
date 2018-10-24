@@ -152,16 +152,16 @@ class K_VolumeManager{
 
             this.gaussianWidget.onAnimation((start) => {
                 if (start) {
-                    K_Manager.renderWindow.getInteractor().requestAnimation(this.gaussianWidget);
+                    K_Manager.Mgr().renderWindow.getInteractor().requestAnimation(this.gaussianWidget);
                 } else {
-                    K_Manager.renderWindow.getInteractor().cancelAnimation(this.gaussianWidget);
+                    K_Manager.Mgr().renderWindow.getInteractor().cancelAnimation(this.gaussianWidget);
                 }
             });
               
             this.gaussianWidget.onOpacityChange(() => {
                 this.gaussianWidget.applyOpacity(this.otf);
-                if (!K_Manager.renderWindow.getInteractor().isAnimating()) {
-                    K_Manager.renderWindow.render();
+                if (!K_Manager.Mgr().renderWindow.getInteractor().isAnimating()) {
+                    K_Manager.Mgr().renderWindow.render();
                 }
             });
 
@@ -182,7 +182,7 @@ class K_VolumeManager{
             // this.actor.getProperty().setGradientOpacityMaximumOpacity(0, 1.0);
 
 
-            K_Manager.AddActor(this.actor);
+            K_Manager.Mgr().AddActor(this.actor);
 
 
             //Add Slice Image
@@ -192,8 +192,8 @@ class K_VolumeManager{
             this.sliceActor = vtkImageSlice.newInstance();
             this.sliceActor.setMapper(this.sliceMapper);
 
-            K_Manager.AddSliceActor(this.sliceActor);
-            K_Manager.AddActor(this.sliceActor);
+            K_Manager.Mgr().AddSliceActor(this.sliceActor);
+            K_Manager.Mgr().AddActor(this.sliceActor);
 
             //Initialize CTF Ctonol
             this.InitializeCTFContoller();
@@ -206,7 +206,7 @@ class K_VolumeManager{
 
         this.SetPresetCTF(0);
 
-        K_Manager.Redraw();
+        K_Manager.Mgr().Redraw();
     }
 
     ResizeGaussianWidget(){        
@@ -251,7 +251,7 @@ class K_VolumeManager{
         
         //Redraw
         this.gaussianWidget.render();
-        K_Manager.Redraw();
+        K_Manager.Mgr().Redraw();
     }
 
     InitializeCTFContoller(){

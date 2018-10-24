@@ -7,27 +7,51 @@ import K_MeshManager from 'K_MeshManager.js'
 import K_VolumeManager from 'K_VolumeManager.js'
 
 // 가장 root 가 되는 manager, static method 로 동작하여서 어디서든 정보에 접근 및 수정할 수 있게 되어있음
+
+let instance;
+let meshManager;
+let volumeManager;
+
 class K_Manager {
 
-    static New(){
-        //Instances
-        this.meshManager = null;
-        this.volumeManager = null;
-        
+
+    constructor(){
+        if(instance) return instance;
+
         this.renderWindow = null;
         this.renderer = null;
 
         this.sliceRenderWindow = null;
         this.sliceRenderer = null;
 
-        
+        this.Initialize();
 
-        this._Initialize();
+        instance = this;
 
     }
 
+    static Mgr(){
+        return new K_Manager();
+    }
+
+    static MeshMgr(){
+        if(meshManager==null){
+            meshManager = new K_MeshManager();
+        }
+
+        return meshManager;
+    }
+
+    static VolumeMgr(){
+        if(volumeManager == null){
+            volumeManager = new K_VolumeManager();
+        }
+
+        return volumeManager;
+    }
+
     //private methods
-    static _Initialize(){
+    Initialize(){
         //First, Initialize Renderer
         const container = document.querySelector('#mainViewer');
         const genericRenderWindow = vtkGenericRenderWindow.newInstance();
@@ -56,35 +80,22 @@ class K_Manager {
         new ResizeSensor(resizeContainer, sliceGenericRenderWindow.resize);
         sliceGenericRenderWindow.resize();
 
-        
+
+        this.Redraw();
     }
 
+    
 
-    //public method
-    static MeshMgr(){
-        if(this.meshManager == null){
-            this.meshManager = new K_MeshManager();
-        }
-        return this.meshManager;
-    }
-
-    static VolumeMgr(){
-        if(this.volumeManager == null){
-            this.volumeManager = new K_VolumeManager();
-        }
-
-        return this.volumeManager;
-    }
-
-    static AddActor(actor){
-        this.renderer.addActor(actor);
-    }
-
-    static AddSliceActor(actor){
+    AddSliceActor(actor){
         this.sliceRenderer.addActor(actor);
     }
 
-    static Redraw(){
+
+    AddActor(actor){
+        this.renderer.addActor(actor);
+    }
+
+    Redraw(){
         this.renderer.resetCamera();
         this.renderWindow.render();
         
